@@ -1,0 +1,19 @@
+generated: '2026-08-25'
+method: searched
+source: https://www.mobilionsystems.com/
+plan_count: 0
+note: >-
+  MOBILion publishes no pricing of any kind. It sells a capital laboratory instrument (MOBIE, an HRIM
+  front end that couples to a third-party mass spectrometer) through a direct sales motion; the site's
+  only commercial call to action is the contact form. There is no /pricing page, no plans page and no
+  quote calculator — the full sitemap (probed 2026-08-25, 200) contains no commercial page at all. The
+  MBI SDK itself is distributed at no charge from GitHub under the MOBILion Software Use Agreement,
+  but that is a license, not a plan.
+plans: []
+evidence:
+- url: https://www.mobilionsystems.com/sitemap.xml
+  status: 200
+  observation: no pricing, plans, quote or store URL present
+- url: https://www.mobilionsystems.com/contact
+  status: 200
+  observation: the sole commercial entry point

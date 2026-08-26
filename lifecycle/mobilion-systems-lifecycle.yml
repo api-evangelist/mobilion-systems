@@ -1,0 +1,60 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/doc/RELEASE_NOTES_1.13.0.txt and
+  https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/README.md
+versioning:
+  scheme: semver-like major.minor.patch
+  current: 1.13.1
+  location: SDK README release banner; artifact filenames
+  git_releases: none — the repository has no GitHub Releases and no tags as of 2026-08-25
+deprecation_policy:
+  documented: true
+  mechanism: >-
+    C++ [[deprecated]] attribute at the declaration, plus a named migration path in the release notes.
+  retention: deprecated members are retained through the 1.x compatibility line
+  removal: named for the 2.0 major release
+  source: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/doc/RELEASE_NOTES_1.13.0.txt
+  deprecated:
+  - symbol: MBISDK::EyeOnCcsCalibration::ArrivalTimeToCCS(int frame_index)
+    since: 1.13.0
+    removal: '2.0'
+    replacement: >-
+      iterate the frame's scans and call the scalar ArrivalTimeToCCS(arrival_time, ion_mass), or await
+      the Frame-based replacement in 2.0
+    note: not exposed by the MBISDK.NET wrapper
+  - symbol: MBISDK::MBIFile::GetEyeOnCCSCalibration()
+    since: 1.13.0
+    removal: '2.0'
+    replacement: GetEyeOnCCSCalibrationOwned()
+    note: >-
+      retained for backward compatibility but slices derived types; the two consolidate to a single
+      unique_ptr-returning call in 2.0
+status_page:
+  present: false
+  probed:
+  - url: https://status.mobilionsystems.com/
+    status: 000 (NXDOMAIN / no host)
+  note: >-
+    no status page exists and none is needed — there is no hosted service to report on. The product is
+    a laboratory instrument plus a locally linked SDK.
+sla:
+  published: false
+support:
+  channel: https://www.mobilionsystems.com/contact
+  sdk_feedback: productfeedback@mobilionsystems.com
+  maintainer: Bennett Kalafut
+  update_notifications: https://go.mobilionsystems.com/l/1089062/2026-08-13/3h86w5
+end_of_life:
+  published: false
+known_lifecycle_defects:
+- issue: >-
+    the Linux .deb, .rpm and Python wheel of 1.13.1 are stamped 1.13.0 (filename, package metadata and
+    the libmbisdk.so.1.13.0 soname). A downstream consumer resolving by package version cannot
+    distinguish 1.13.0 from 1.13.1.
+  vendor_acknowledged: true
+  fix_promised: 'correctly versioned packages in the next build'
+- issue: >-
+    the Linux Python wheel is tagged cp39-cp39, so pip refuses it on any CPython other than 3.9,
+    despite broader classifiers in the package metadata. Other versions require a rebuild.
+  vendor_acknowledged: true

@@ -1,0 +1,68 @@
+generated: '2026-08-25'
+method: searched
+source: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/README.md#error-handling
+note: >-
+  This is an SDK error registry, not an HTTP problem-type catalogue — MOBILion publishes no network
+  API, so there is no RFC 9457 surface and no 4xx/5xx responses to derive from. The C++ MBIFile API
+  reports failure through integer error codes rather than exceptions; the codes below are transcribed
+  verbatim from the vendor's published table.
+format: sdk-error-codes
+envelope:
+  check: MBIFile::GetErrorCode()
+  message: MBIFile::GetErrorMessage()
+  convention: >-
+    check GetErrorCode() after Init() and after any operation that may fail. MBIFile does NOT throw on
+    a missing or bad file. The Python bindings expose the same codes. The .NET wrapper does NOT — it
+    surfaces failure through managed exceptions instead.
+  exceptions: >-
+    the CCS calibration classes are the exception to the rule and DO throw — std::invalid_argument
+    (Z <= 0, M_ion <= 0) and std::runtime_error (zero reduction-factor denominator,
+    CCS_MISSING_TOF_CALIBRATION). Since 1.13.0 those errors are no longer mirrored onto the parent
+    MBIFile; read std::exception::what().
+error_count: 13
+errors:
+- code: ERR_UNEXPECTED
+  value: -1
+  meaning: Unexpected error
+- code: ERR_SUCCESS
+  value: 0
+  meaning: Success
+- code: ERR_FILE_NOT_FOUND
+  value: 1
+  meaning: File not found
+  action: verify the .mbi path; MBIFile construction and Init() do not throw for this
+- code: ERR_HDF5_FILE_ERROR
+  value: 2
+  meaning: HDF5 read error
+  action: the .mbi container is HDF5-backed; a read error here is a container-level fault
+- code: ERR_FILE_NOT_INITIALIZED
+  value: 3
+  meaning: Init() not called or failed
+  action: call MBIFile::Init() after construction — construction alone does not read the file
+- code: ERR_METADATA_NOT_LOADED
+  value: 101
+  meaning: Metadata not loaded
+- code: ERR_FRAME_NOT_LOADED
+  value: 102
+  meaning: Frame data not loaded
+- code: ERR_DOUBLE_LOAD
+  value: 103
+  meaning: Frame loaded twice
+- code: ERR_BAD_FRAME_INDEX
+  value: 201
+  meaning: Frame index out of range
+  action: >-
+    frame indices are 1-based — valid range is 1..GetNumFrames() inclusive. GetFrame(0) is rejected
+    and returns a null pointer with this code.
+- code: ERR_BAD_SCAN_INDEX
+  value: 202
+  meaning: Scan index out of range
+- code: ERR_ITEM_MISSING
+  value: 301
+  meaning: Requested item not present
+- code: ERR_OPERATION_NOT_SUPPORTED
+  value: 401
+  meaning: Operation not supported
+- code: ERR_ZERO_FRAMES
+  value: 501
+  meaning: File contains no frames

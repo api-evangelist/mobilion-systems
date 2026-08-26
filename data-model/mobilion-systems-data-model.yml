@@ -1,0 +1,113 @@
+generated: '2026-08-25'
+method: derived
+source: >-
+  packages/mobilion-systems-packages.yml (public headers in
+  https://github.com/MOBILionSystems/MOBILion_MBI_SDK/tree/main/include) and the SDK README data-model
+  and common-tasks sections
+note: >-
+  Derived from the SDK's published C++ headers and README, not from an OpenAPI — MOBILion ships no
+  network contract. The graph below describes the MBI file format's object model as the SDK exposes it.
+root: MBIFile
+entities:
+- name: MBIFile
+  header: MBIFile.h
+  description: >-
+    top-level handle on one .mbi file (HDF5 container). Construction does not read the file; Init()
+    does. Close() releases it and, since 1.13.0, resets IsInitialized().
+  summaries: [GetAcquisitionTimestamp, GetExperimentType, GetIonPolarity, GetRetentionTimes,
+    GetFrameMSLevels, GetFrameCollisionEnergies, GetScanCounts, GetFrameTIC,
+    GetAverageIMSamplingPeriod, GetMaxNumScansPerFrame, GetNumFrames, GetVersion]
+- name: Frame
+  header: MBIFrame.h
+  description: >-
+    one point in retention time, holding a sparse 2-D array of int32 ion counts indexed by
+    (ion-mobility arrival-time bin, TOF sample index). Rows are arrival-time bins; columns are TOF
+    sample indices.
+  accessors: [GetFrameDataAsCSRArray, GetFrameDataAsCOOArray, GetFrameDataAsCSRComponents,
+    GetFrameIMMSSpectrumAsCSR, GetFrameIMMSSpectrumAsCOO, GetNonZeroScanIndices, GetMassSpectrum,
+    GetScanDataMzIndexedSparse, GetScanDataToFIndexedSparse, GetScanDataMzIndexedDense,
+    GetScanDataToFIndexedDense, GetScanSummationToFIndexedDense, GetMaxPointsInScan,
+    GetCollisionEnergy, IsCollisionEnergyValid, GetCalibration]
+- name: MassSpectrum
+  header: MBIFrame.h
+  description: one arrival-time bin of a frame — a scan. Carries indices, mz, intensities, nnz.
+- name: CSRArray / COOArray
+  header: MBISparse.h
+  description: >-
+    sparse containers over int32 ion counts. Both carry nRows, nColumns, nnz, isZeroPadded and Sum().
+    CSR is data/indices/indptr; COO is data/rowIndices/columnIndices.
+- name: CSRIMMSSpectrum / COOIMMSSpectrum
+  header: MBISparse.h
+  description: the corresponding sparse array plus a calibrated mz vector.
+- name: TofCalibration
+  header: MBICalibration.h
+  description: TOF sample index <-> m/z conversion (MzToIndex, IndexToMz, scalar and vectorized).
+- name: EyeOnCcsCalibration
+  header: MBICalibration.h
+  description: >-
+    arrival time <-> collision cross section, charge-aware since 1.13.0. Since 1.13.0 it is
+    independent of the parent MBIFile's lifetime and may be used after Close().
+  methods: [ArrivalTimeToCCS, CCSToArrivalTime, GetCCSCoefficients, SetCCSCoefficients, GetGasMass,
+    ReductionFactor]
+- name: NonReducedEyeOnCcsCalibration
+  header: MBICalibration.h
+  description: >-
+    derives from EyeOnCcsCalibration; overrides ReductionFactor to return 1/Z (charge scaling only,
+    no reduced-mass adjustment). Used when the stored gas mass is 0.
+- name: Metadata / GlobalMetadata / FrameMetadata
+  header: MBIMetadata.h
+  description: >-
+    key-addressed metadata. Key names are constants in MBIAttr::GlobalKey (MBIConstants.h). ReadAll()
+    returns the whole map.
+- name: ScanDefinition
+  header: MBIScanDefinition.h
+  description: >-
+    CE ramps and isolation windows. The vendor states this is groundwork for future DIA support and is
+    not required for current data.
+- name: MBIFileHDF5Adapter
+  header: MBIFileHDF5Adapter.h
+  description: low-level HDF5 adapter; not normally called directly.
+relationships:
+- from: MBIFile
+  to: Frame
+  type: has_many
+  via: GetFrame(index) — 1-based, 1..GetNumFrames()
+- from: MBIFile
+  to: TofCalibration
+  type: has_one
+  via: GetCalibration()
+- from: MBIFile
+  to: EyeOnCcsCalibration
+  type: has_one
+  via: GetEyeOnCCSCalibrationOwned() — present only when HasCCSCalibration()
+- from: MBIFile
+  to: GlobalMetadata
+  type: has_one
+  via: GetGlobalMetaData()
+- from: MBIFile
+  to: FrameMetadata
+  type: has_many
+  via: GetFrameMetadata(frameIndex)
+- from: Frame
+  to: MassSpectrum
+  type: has_many
+  via: GetMassSpectrum(scanIndex) over GetNonZeroScanIndices()
+- from: Frame
+  to: TofCalibration
+  type: has_one
+  via: Frame::GetCalibration() — the calibration in effect for that frame
+- from: Frame
+  to: CSRArray
+  type: has_one
+  via: GetFrameDataAsCSRArray()
+- from: CSRIMMSSpectrum
+  to: CSRArray
+  type: extends
+  via: adds a calibrated mz vector
+- from: NonReducedEyeOnCcsCalibration
+  to: EyeOnCcsCalibration
+  type: extends
+  via: overrides ReductionFactor
+enums:
+  experiment_type: [MS1, AIF, SIFF_MAF, MIFF_MAF]
+container_format: HDF5

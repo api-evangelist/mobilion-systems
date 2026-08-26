@@ -1,0 +1,106 @@
+generated: '2026-08-25'
+method: searched
+source: https://github.com/MOBILionSystems/MOBILion_MBI_SDK
+note: >-
+  MOBILion publishes exactly one first-party developer package family: the MOBILion MBI SDK, a native
+  library for reading the HDF5-backed .mbi files written by the MOBIE EyeOn acquisition system. It is
+  distributed ONLY as binaries committed into the public GitHub repository — there is no npm, PyPI,
+  NuGet, Maven, crates.io, RubyGems or Packagist listing, and no GitHub Release or tag. All of
+  pypi.org/pypi/mbisdk, pypi.org/pypi/mbi-sdk, pypi.org/pypi/mobilion-mbi, api.nuget.org (MBISDK,
+  MBISDK.NET, MOBILion.MBISDK) and registry.npmjs.org/mbisdk returned 404 on 2026-08-25, so no
+  registry metadata endpoint exists to read a version or a release date from. Versions and dates below
+  are therefore read from the artifact filenames, the README release banner and the repository commit
+  history rather than from a registry.
+registries_probed:
+- registry: pypi
+  queries: [mbisdk, mbi-sdk, mobilion-mbi]
+  result: 404 on all
+- registry: nuget
+  queries: [MBISDK, MBISDK.NET, MOBILion.MBISDK]
+  result: 404 on all
+- registry: npm
+  queries: [mbisdk]
+  result: 404
+sdk_count: 3
+packages:
+- name: MBI_SDK
+  language: C++
+  official: true
+  registry: github
+  url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK
+  version: 1.13.1
+  published: '2026-08-13'
+  platforms: [windows-x64, linux-x64]
+  artifacts:
+  - lib/win-x64/MBI_SDK.dll
+  - lib/win-x64/MBI_SDK.lib
+  - lib/linux-x64/mbisdk-dev_1.13.0_amd64.deb
+  - lib/linux-x64/mbisdk-dev-1.13.0-1.x86_64.rpm
+  headers: [MBIFile.h, MBIFrame.h, MBISparse.h, MBICalibration.h, MBIConstants.h, MBIMetadata.h,
+    MBIScanDefinition.h, MBIFileHDF5Adapter.h]
+  requires: MSVC v143 / C++14 (Windows); GCC with C++17 and -DLINUX=1 (Linux)
+  note: >-
+    published date is the repository's last commit (2026-08-13); there is no release or tag to date it
+    from. The Linux .deb/.rpm carry a 1.13.0 filename and package version and a
+    libmbisdk.so.1.13.0 soname; the README states plainly that the binaries are in fact 1.13.1 and
+    that the Linux packaging job failed to pick up the release version stamp.
+- name: mbisdk
+  language: Python
+  official: true
+  registry: github
+  url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/tree/main/lib/linux-x64/swig-python
+  version: 1.13.0.11740
+  published: '2026-08-13'
+  platforms: [linux-x64, windows-x64]
+  artifacts:
+  - lib/linux-x64/swig-python/mbisdk-1.13.0.11740-cp39-cp39-linux_x86_64.whl
+  - lib/win-x64/swig-python/mbisdk.py
+  - lib/win-x64/swig-python/_mbisdk.pyd
+  install: pip install mbisdk-1.13.0.11740-cp39-cp39-linux_x86_64.whl
+  note: >-
+    SWIG-generated bindings. The Linux wheel is tagged cp39-cp39, so pip installs it on CPython 3.9
+    ONLY, despite broader classifiers in the package metadata — the README says so explicitly. The
+    wheel bundles libhdf5.so.200 / libhdf5_cpp.so.200 via a $ORIGIN runpath and needs no system HDF5.
+    Its 1.13.0 version label is the same mislabel as the Linux packages; the code is 1.13.1. Windows
+    bindings are loose files, not a wheel — put the directory on sys.path with MBI_SDK.dll findable.
+- name: MBISDK_DOTNET
+  language: .NET (C#/C++CLI)
+  official: true
+  registry: github
+  url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/tree/main/lib/win-x64/MBISDK.NET
+  version: 1.13.1
+  published: '2026-08-13'
+  platforms: [windows-x64]
+  artifacts:
+  - lib/win-x64/MBISDK.NET/MBISDK_DOTNET-1.13.1-Release-NetCore.zip
+  - lib/win-x64/MBISDK.NET/MBISDK_DOTNET-1.13.1-Release-NetFramework.zip
+  targets: [net8.0, net472]
+  namespace: MBISDK_DOTNET
+  note: >-
+    mixed-mode C++/CLI wrapper, Windows x64 only (C++/CLI does not build for Linux). Shipped as flat
+    ZIPs, not as a NuGet package; the consuming project must target x64 explicitly and, for the .NET 8
+    build, deploy Ijwhost.dll alongside. Version is read from the archive filenames and is the one
+    place in the distribution that carries the correct 1.13.1 stamp.
+examples:
+- path: examples/MBISDK_demo
+  description: worked Visual Studio 2022 solution (MBI_test.cpp) demonstrating the C++ read path
+license:
+  name: MOBILion Software Use Agreement
+  spdx: NOASSERTION
+  url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/LICENSE.md
+  summary: >-
+    Proprietary, non-exclusive, non-transferable, revocable read-only license. Object-code
+    redistribution to third parties is permitted for NON-COMMERCIAL use only; reverse engineering and
+    hosting/processing on behalf of a third party require a separate agreement. Not open source.
+  third_party: HDF5 (see COPYING.txt)
+maintainer:
+  name: Bennett Kalafut
+  email: productfeedback@mobilionsystems.com
+third_party_readers:
+- name: ProteoWizard msconvert
+  official: false
+  url: https://proteowizard.sourceforge.io/download.html
+  note: >-
+    third-party, not MOBILion-published. msconvert reads MOBILion .mbi and converts to mzML alongside
+    AB SCIEX, Agilent, Bruker, Shimadzu, Thermo and Waters raw formats. Recorded for completeness;
+    it is NOT counted in sdk_count.

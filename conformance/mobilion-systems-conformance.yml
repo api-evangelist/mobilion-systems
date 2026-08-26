@@ -1,0 +1,103 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://www.mobilionsystems.com/quality-management,
+  https://www.mobilionsystems.com/open-source-software,
+  https://github.com/MOBILionSystems/MOBILion_MBI_SDK
+note: >-
+  MOBILion publishes no OpenAPI, no GraphQL SDL and no AsyncAPI, so no conformance can be derived from
+  a contract. Everything below is read from a published page or from the SDK's own documented
+  behaviour, and every reward-only slot with no evidence is recorded as conforms:false rather than
+  left blank.
+standards:
+- id: iso-9001-2015
+  conforms: true
+  evidence:
+    url: https://www.mobilionsystems.com/quality-management
+    quote: >-
+      "MOBILion Systems has successfully achieved the ISO 9001:2015 certification for our exceptional
+      quality management systems."
+    certifying_body: DEKRA
+    achieved: '2023-06-09'
+    expires: '2026-06-08'
+    caveat: >-
+      the certificate window the company itself publishes ended 2026-06-08, which is before the date
+      of this probe (2026-08-25). A recertification may well have happened; the page had not been
+      updated to say so. Recorded as published, with the published dates.
+- id: hdf5
+  conforms: true
+  evidence:
+    what: >-
+      the .mbi file format is an HDF5 container. MBIFileHDF5Adapter.h is the SDK's low-level adapter,
+      ERR_HDF5_FILE_ERROR is a first-class error code, and the Linux packages and Python wheel bundle
+      libhdf5.so.200 / libhdf5_cpp.so.200. COPYING.txt in the SDK repository is the HDF5 license.
+    url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/COPYING.txt
+  note: >-
+    HDF5 is the container, not a domain data standard. The scientific payload inside it is
+    MOBILion-proprietary and is not self-describing to a generic HDF5 reader.
+- id: scipy-sparse-csr
+  conforms: true
+  evidence:
+    what: >-
+      GetFrameDataAsCSRComponents() returns data/indices/indptr in exactly SciPy's CSR triple order,
+      documented by the vendor as going straight into csr_matrix / csr_array with no rearrangement.
+    url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/README.md#reading-a-frame-in-python
+  note: a de-facto numerical interchange convention, not a ratified standard.
+domain_standard_conformance:
+- id: mzml-hupo-psi
+  conforms: false
+  evidence:
+    what: >-
+      mzML (and imzML) is the HUPO-PSI open interchange standard for mass-spectrometry data and is the
+      domain standard a buyer in this market would ask for. MOBILion publishes NO mzML writer, no
+      converter and no mzML claim of its own. Conversion out of .mbi is done by ProteoWizard
+      msconvert, a THIRD-PARTY tool, which lists MOBILion alongside AB SCIEX, Agilent, Bruker,
+      Shimadzu, Thermo and Waters raw formats.
+    third_party_url: https://proteowizard.sourceforge.io/download.html
+  note: >-
+    this is the one domain-standard slot that genuinely applies to this market, and it is unmet by the
+    vendor. The practical consequence for an integrator is that the first-party path (.mbi + the MBI
+    SDK) is proprietary and license-gated, and the open-standard path exists only because a
+    third-party project built it. REWARD-ONLY — no penalty is implied by recording the absence.
+- id: imzml
+  conforms: false
+  evidence:
+    what: no imaging-MS / imzML surface is published.
+cross_cutting:
+- id: oauth2
+  conforms: false
+  evidence: no network API, therefore no OAuth surface.
+- id: rfc9457
+  conforms: false
+  evidence: >-
+    no HTTP surface. The SDK uses integer error codes on MBIFile; see
+    errors/mobilion-systems-error-codes.yml.
+- id: openapi
+  conforms: false
+  evidence: >-
+    probed 2026-08-25 — www.mobilionsystems.com/openapi.json 404, /api-docs 404;
+    api./developer./docs.mobilionsystems.com do not resolve. No OpenAPI is published anywhere.
+- id: semver
+  conforms: partial
+  evidence: >-
+    versions are major.minor.patch and breaking changes are held for a major release, but the shipped
+    Linux packages carry the wrong patch version, so the guarantee is not machine-verifiable from the
+    artifact.
+- id: rfc9116
+  conforms: false
+  evidence: '/.well-known/security.txt returned 404 on both www.mobilionsystems.com and the apex.'
+compliance_programs:
+- name: ISO 9001:2015 Quality Management System
+  body: DEKRA
+  status: published
+  url: https://www.mobilionsystems.com/quality-management
+open_source_disclosure:
+  published: true
+  url: https://www.mobilionsystems.com/open-source-software
+  note: >-
+    a paginated third-party attribution list for the MOBIE instrument software stack (Angular 11,
+    Django/DRF, drf-yasg, Daphne, confluent-kafka, HDF5, Cython and several hundred more), published
+    with version and license per component. It discloses MOBILion's OWN dependencies; none of these
+    are MOBILion packages. Notably it evidences an internal Django REST Framework + drf-yasg service
+    inside the instrument software — an internal API surface that is not publicly documented or
+    reachable, and which is therefore NOT counted as a published API here.

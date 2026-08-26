@@ -1,0 +1,76 @@
+generated: '2026-08-25'
+method: searched
+source: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/README.md
+surface: native SDK (C++ / Python / .NET) — MOBILion publishes no network API
+note: >-
+  The cross-cutting semantics below are the SDK's, not an HTTP API's. There is no base URL, no auth
+  style, no pagination, no rate-limit signalling and no request-id tracing, because there is no
+  network surface to carry them. Every field that would describe one is recorded as na with the
+  reason, rather than omitted.
+auth_style: na
+auth_note: >-
+  the SDK reads local files. Access control is contractual, not technical — the MOBILion Software Use
+  Agreement is accepted at install time (the .deb/.rpm prompt for it; MBISDK_ACCEPT_LICENSE=yes
+  accepts it unattended).
+idempotency: na
+idempotency_note: read-only SDK; there is no write, create or charge operation to replay.
+pagination:
+  style: na
+  note: >-
+    the closest analogue is frame iteration. Frames are addressed by index, NOT by cursor — valid
+    indices run 1..GetNumFrames() inclusive.
+indexing:
+  frames: 1-based
+  summary_vectors: 0-based
+  gotcha: >-
+    GetFrame(n) is 1-based, but per-frame summary vectors such as GetRetentionTimes() are plain
+    zero-based std::vectors, so frame n sits at offset n-1 in those. GetFrame(0) is rejected and
+    returns a null pointer with ERR_BAD_FRAME_INDEX.
+data_access:
+  preferred: GetFrameDataAsCSRArray() / GetFrameDataAsCOOArray()
+  rationale: >-
+    the file is genuinely sparse and is returned in sparse form; nothing is decompressed into a dense
+    array unless explicitly requested. The vendor names looping scan-level accessors over a whole
+    frame as the most common performance mistake made with the SDK.
+  containers: [CSRArray<T>, COOArray<T>, CSRIMMSSpectrum<T>, COOIMMSSpectrum<T>, MassSpectrum]
+  interop: >-
+    data/indices/indptr are exactly SciPy's CSR triple and go straight into scipy.sparse.csr_array
+    with no rearrangement. Pass the shape explicitly using GetMaxPointsInScan() — letting SciPy infer
+    it yields per-frame column counts set by the highest occupied TOF sample, so frames end up with
+    inconsistent widths and cannot be stacked or compared.
+error_envelope:
+  style: integer error codes on MBIFile (C++ and Python); managed exceptions in .NET
+  catalog: errors/mobilion-systems-error-codes.yml
+  note: >-
+    MBIFile does not throw. The CCS calibration classes do — that asymmetry is the single sharpest
+    edge in the API and is documented in the error catalogue.
+memory_management:
+  model: MBIFile holds Frames in a weak-pointer cache
+  release: a loaded frame's memory is released once the last strong holder lets go
+  explicit: >-
+    no explicit unload/uncache is required in C++ (no-op calls remain for backwards compatibility);
+    call MBIFile::Close() when done. In Python call frame.Unload(). In .NET, MBIFile and Frame are
+    both IDisposable and hold native memory — scope them with using.
+versioning:
+  scheme: semver-like major.minor.patch
+  current: 1.13.1
+  compatibility_line: 1.x
+  policy: >-
+    deprecated members are retained through the 1.x line and slated for removal or consolidation in
+    2.0. Two consolidations are named in advance — GetEyeOnCCSCalibration()/GetEyeOnCCSCalibrationOwned()
+    collapse to one unique_ptr-returning call, and ArrivalTimeToCCS(int frame_index) moves onto Frame.
+  known_defect: >-
+    the Linux .deb, .rpm and Python wheel are labelled 1.13.0 while containing 1.13.1 code. A consumer
+    reading the package version cannot tell which build they have. The vendor documents this openly.
+reversibility:
+  grade: na
+  reason: >-
+    the MBI SDK is a strictly read-only interface. The Software Use Agreement grants a license to
+    "read and use MBI data files"; there is no create, update, delete, submit or charge operation
+    anywhere in the published surface, so there is nothing to reverse. No reversal operation and no
+    window are recorded because none exists and none is needed.
+  write_surface: none
+  operations_reviewed: MBIFile, Frame, TofCalibration, EyeOnCcsCalibration, Metadata, ScanDefinition
+dry_run_mode: na
+rate_limit_signaling: na
+request_id_tracing: na

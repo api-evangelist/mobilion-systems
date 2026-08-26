@@ -1,0 +1,21 @@
+generated: '2026-08-25'
+method: searched
+source: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/README.md
+limit_count: 0
+note: >-
+  Not applicable rather than undocumented. MOBILion publishes no network API — the MBI SDK is a
+  locally linked native library reading a local HDF5 file — so there is no quota, no window, no burst,
+  no 429 and no RateLimit-* / Retry-After header to record. Probes for an API host on 2026-08-25
+  (api./developer./docs.mobilionsystems.com) did not resolve, and www.mobilionsystems.com/openapi.json
+  and /api-docs both returned 404.
+applicable: false
+limits: []
+response_headers: []
+exhaustion_status: null
+performance_guidance:
+  note: >-
+    the nearest thing the vendor publishes to a throughput constraint is a performance warning, not a
+    limit — looping the scan-level accessors over a whole frame does far more work than the single
+    GetFrameDataAsCSRArray() / GetFrameDataAsCOOArray() call, and is named as the most common
+    performance mistake made with this SDK.
+  source: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/README.md#data-model

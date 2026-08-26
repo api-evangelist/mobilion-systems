@@ -1,0 +1,57 @@
+generated: '2026-08-25'
+method: searched
+source: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/doc/RELEASE_NOTES_1.13.0.txt
+note: >-
+  MOBILion publishes no dated changelog on its website. The only change record it publishes is the
+  release-notes file shipped inside the MBI SDK repository, plus the release banner in the SDK README.
+  The notes are versioned but NOT dated; the dates below are the repository commit dates that carried
+  them, and are marked as such.
+scheme: semver-like (major.minor.patch), 1.x compatibility line with breaking changes deferred to 2.0
+current_version: 1.13.1
+versioned_artifact: MBI SDK (native C++ / Python / .NET)
+entries:
+- version: 1.13.1
+  date: '2026-08-13'
+  date_source: repository commit date; the release itself is undated by the vendor
+  breaking: false
+  highlights:
+  - Release banner in the SDK README declares 1.13.1 as the shipping release.
+  - Linux .deb/.rpm and the Python wheel still carry a 1.13.0 label because the Linux packaging job
+    did not pick up the release version stamp; the binaries are 1.13.1 and expose the full 1.13.1 API.
+    Correctly versioned packages are promised in the next build.
+  - .NET archives (MBISDK_DOTNET-1.13.1-Release-NetCore.zip / -NetFramework.zip) are correctly stamped.
+- version: 1.13.0
+  date: '2026-08-13'
+  date_source: repository commit date; the release itself is undated by the vendor
+  breaking: true
+  additions:
+  - EyeOnCcsCalibration decoupled from parent MBIFile lifetime — a calibration can now outlive, and be
+    used after, Close() on the file it came from. filename_at_construction captures the parent name.
+  - GetEyeOnCCSCalibrationOwned() returns std::unique_ptr<EyeOnCcsCalibration> with the correct
+    runtime type (NonReducedEyeOnCcsCalibration when stored gas mass is 0).
+  - NonReducedEyeOnCcsCalibration class — overrides ReductionFactor to return 1/Z.
+  - Charge-aware overloads ArrivalTimeToCCS(double,double,int Z) and CCSToArrivalTime(...,int Z).
+  - GetGasMass(); public virtual ReductionFactor(double M_ion,int Z).
+  - De-novo EyeOnCcsCalibration constructor taking coefficients, ccs_minimum, ccs_maximum, at_surfing,
+    mass_gas_medium and an optional shared_ptr<TofCalibration> — builds a calibration with no open file.
+  - MBISDK.NET introduced — managed CCSCalibration / NonReducedCCSCalibration wrapper classes and
+    MBIFile::GetCCSCalibration().
+  breaking_changes:
+  - GetCCSCoefficients() return order REVERSED — now lowest-order first (constant term at index 0).
+    Callers that index into the result or copy it verbatim must reverse their traversal.
+  - GetEyeOnCCSCalibration() now delegates to GetEyeOnCCSCalibrationOwned() and slices the result;
+    computed CCS values for gas-mass-0 files CHANGE (reduced-mass denominator no longer divides by
+    zero — ReductionFactor returns 1/Z instead).
+  - ~15 calls to mbi_file_ptr->setExternalErrorMessage() removed; callers that read
+    file->getErrorMessage() after catching a CCS exception must read std::exception::what() instead.
+  - MBIFile::Close() now sets is_initialized = false, so IsInitialized() finally reports correctly
+    after Close(). Guards built on it change behaviour.
+  - New throws — std::invalid_argument on Z <= 0 for the Z-aware overloads; std::invalid_argument /
+    std::runtime_error from ReductionFactor; std::runtime_error (CCS_MISSING_TOF_CALIBRATION) from the
+    deprecated ArrivalTimeToCCS(int frame_index) when built de-novo.
+  deprecations:
+  - EyeOnCcsCalibration::ArrivalTimeToCCS(int frame_index) marked [[deprecated]] — hard-couples the
+    calibration to an open parent MBIFile. Migration — iterate the frame's scans and call the scalar
+    ArrivalTimeToCCS(arrival_time, ion_mass) overload, or wait for the Frame-based replacement in 2.0.
+    Not exposed by the MBISDK.NET wrapper.
+  issue_refs: [DCU-1128]

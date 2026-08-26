@@ -1,0 +1,36 @@
+generated: '2026-08-25'
+method: probed
+source: live HTTPS probes of every host in apis.yml
+note: >-
+  Every path 404d on both hosts. The origin (Webflow) answers a fixed "Invalid .well-known request"
+  HTML stub for any /.well-known/* path, so there is nothing served here. No WellKnown or SecurityTxt
+  pointer is emitted in apis.yml — this file records a measured absence, not a presence.
+hosts:
+- host: www.mobilionsystems.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: mobilionsystems.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404

@@ -1,17 +1,31 @@
 aid: mobilion-systems
 name: MOBILion Systems
-description: 'MOBILion Systems is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'MOBILion Systems is a separation-science instrument company founded in 2015 and headquartered
+  in Chadds Ford, Pennsylvania. It is the exclusive commercial licensee of SLIM (Structures for Lossless
+  Ion Manipulation) and builds MOBIE, a high-resolution ion mobility (HRIM) platform that couples a serpentine
+  ~13-metre ion path to third-party mass spectrometers for glycan, lipid, peptide, PFAS, lipid-nanoparticle
+  and biotherapeutic characterisation. Its developer surface is not a web API: the MOBIE EyeOn acquisition
+  system writes an HDF5-backed proprietary MBI file, and MOBILion publishes a first-party native SDK for
+  reading it — a C++ library for Windows and Linux with SWIG-generated Python bindings and a mixed-mode
+  .NET wrapper, shipped with a full Doxygen API reference from the MOBILionSystems GitHub organization.'
+image: https://cdn.prod.website-files.com/6243e199d7710bbc2ee76c7e/62632cea3d90665f5362efba_MOBILion%20LOGO%204.svg
 url: https://raw.githubusercontent.com/api-evangelist/mobilion-systems/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-25'
 modified: '2026-08-25'
 tags:
 - Company
+- Scientific Instruments
+- Mass Spectrometry
+- Ion Mobility
+- Proteomics
+- Lipidomics
+- Life Sciences
+- Laboratory Software
+- SDK
+- File Format
 apis: []
 maintainers:
 - FN: Kin Lane
@@ -19,5 +33,54 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/mobilion-systems-domain-security.yml
 - type: Website
-  url: https://forgeglobal.com/mobilion-systems_stock/
+  url: https://www.mobilionsystems.com/
+- type: GitHubOrganization
+  url: https://github.com/MOBILionSystems
+- type: Documentation
+  url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/README.md
+- type: APIReference
+  url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/tree/main/doc/html
+- type: GettingStarted
+  url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/README.md#quick-start
+- type: Blog
+  url: https://www.mobilionsystems.com/news
+- type: Support
+  url: https://www.mobilionsystems.com/contact
+- type: PrivacyPolicy
+  url: https://www.mobilionsystems.com/privacy-policy
+- type: Packages
+  url: packages/mobilion-systems-packages.yml
+- type: SDKs
+  url: packages/mobilion-systems-packages.yml
+- type: ChangeLog
+  url: changelog/mobilion-systems-changelog.yml
+- type: ErrorCatalog
+  url: errors/mobilion-systems-error-codes.yml
+- type: Conventions
+  url: conventions/mobilion-systems-conventions.yml
+- type: DataModel
+  url: data-model/mobilion-systems-data-model.yml
+- type: Lifecycle
+  url: lifecycle/mobilion-systems-lifecycle.yml
+- type: Deprecation
+  url: lifecycle/mobilion-systems-lifecycle.yml
+- type: Conformance
+  url: conformance/mobilion-systems-conformance.yml
+- type: Compliance
+  url: conformance/mobilion-systems-conformance.yml
+- type: LLMsTxt
+  url: llms/mobilion-systems-llms.txt
+- type: Plans
+  url: plans/mobilion-systems-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/mobilion-systems-rate-limits.yml
+- type: TermsOfService
+  url: https://github.com/MOBILionSystems/MOBILion_MBI_SDK/blob/main/LICENSE.md
+x-enrichment:
+  date: '2026-08-25'
+  status: enriched
+  artifacts_added: 12
+  pass: local-v1

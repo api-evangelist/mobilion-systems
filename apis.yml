@@ -8,6 +8,17 @@ description: 'MOBILion Systems is a separation-science instrument company founde
   system writes an HDF5-backed proprietary MBI file, and MOBILion publishes a first-party native SDK for
   reading it — a C++ library for Windows and Linux with SWIG-generated Python bindings and a mixed-mode
   .NET wrapper, shipped with a full Doxygen API reference from the MOBILionSystems GitHub organization.'
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://cdn.prod.website-files.com/6243e199d7710bbc2ee76c7e/62632cea3d90665f5362efba_MOBILion%20LOGO%204.svg
 url: https://raw.githubusercontent.com/api-evangelist/mobilion-systems/refs/heads/main/apis.yml
 x-type: company

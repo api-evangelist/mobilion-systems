@@ -19,6 +19,19 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source:
+  - rate-limits
+  - security
+  generated: '2026-09-02'
+  method: derived
 image: https://cdn.prod.website-files.com/6243e199d7710bbc2ee76c7e/62632cea3d90665f5362efba_MOBILion%20LOGO%204.svg
 url: https://raw.githubusercontent.com/api-evangelist/mobilion-systems/refs/heads/main/apis.yml
 x-type: company
